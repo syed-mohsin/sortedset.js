@@ -161,12 +161,21 @@
    */
   SortedSet.prototype.remove = function(element) {
     // TODO: Implement remove method
+    var isElementRemoved = false;
+
+    while(setArray.indexOf(element) !== -1) {
+      this.removeAt(setArray.indexOf(element));
+      isElementRemoved = true;
+    }
+
+    if (isElementRemoved) return element;
   };
 
   /* Removes element at index location and returns the element
    */
   SortedSet.prototype.removeAt = function(index) {
     // TODO: Implement removeAt method
+    return setArray.splice(index, 1)[0];
   };
 
   /* Removes elements that are larger than lower bound and smaller than upper
@@ -174,6 +183,20 @@
    */
   SortedSet.prototype.removeBetween = function(lbound, ubound, exclusive) {
     // TODO: Implement removeBetween method
+    var elementsToRemove = this.getBetween(lbound, ubound, exclusive);
+    var removedElements = [];
+
+    var element, removedElement;
+    for (var i=0; i<elementsToRemove.length; i++) {
+      element = elementsToRemove[i];
+      removedElement = this.remove(element);
+
+      if (removedElement) {
+        removedElements.push(removedElement);
+      }
+    }
+
+    return removedElements;
   };
 
   /* Removes all elements from the set
