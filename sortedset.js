@@ -14,11 +14,26 @@
 
   // Constructor for the SortedSet class
   function SortedSet(initial) {
-    if (arguments.length > 0) {
+    if (arguments.length > 0 && initial && initial.length) {
       // TODO: Handle the case when initial array is provided; if array has
       // elements of duplicate value, reduce down to one instance and sort the
       // elements in ascending order.
+
       setArray = [];
+      var duplicates = new Set();
+
+      initial.forEach(function(item) {
+        if (!duplicates.has(item)) {
+
+          duplicates.add(item);
+          setArray.push(item);
+        }
+      });
+
+      // sort array after removing duplicates
+      setArray.sort(function(a,b) {
+        return a - b;
+      });
     } else {
       setArray = [];
     }
@@ -74,6 +89,10 @@
    */
   SortedSet.prototype.contains = function(element) {
     // TODO: Implement contains method
+
+    return setArray.some(function(item) {
+      return item === element;
+    });
   };
 
   /* Gets elements between startIndex and endIndex. If endIndex is omitted, a
@@ -81,6 +100,11 @@
    */
   SortedSet.prototype.get = function(startIndex, endIndex) {
     // TODO: Implement get method
+    if (startIndex >= 0 && endIndex >= 0) {
+      return setArray.slice(startIndex, endIndex + 1);
+    } else if (startIndex >= 0 && startIndex < setArray.length) {
+      return setArray[startIndex];
+    }
   };
 
   /* Gets all items between specified value range. If exclusive is set, values
@@ -88,12 +112,42 @@
    */
   SortedSet.prototype.getBetween = function(lbound, ubound, exclusive) {
     // TODO: Implement getBetween method
+    var betweenArr = [];
+    var duplicates = new Set();
+
+    setArray.forEach(function(item) {
+      if (!duplicates.has(item)) {
+        duplicates.add(item);
+      // current item is a duplicate
+      } else {
+        return; // continue to next iteration;
+      }
+
+      if (item > lbound && item < ubound) {
+        betweenArr.push(item);
+      }
+
+      // handle case where non-exclusive
+      if (!exclusive && (item === lbound || item === ubound)) {
+        betweenArr.push(item);
+      }
+    });
+
+    return betweenArr;
   };
 
   /* Adds new element to the set if not already in set
    */
   SortedSet.prototype.add = function(element) {
     // TODO: Implement add method
+
+    if (element && setArray.indexOf(element) === -1) {
+      setArray.push(element);
+
+      setArray.sort(function(a,b) {
+        return a - b;
+      });
+    }
   };
 
 
@@ -126,6 +180,7 @@
    */
   SortedSet.prototype.clear = function() {
     // TODO: Implement clear method
+    setArray = [];
   };
 
   SortedSet.prototype.forEachAsync = function(callback, thisArg) {
